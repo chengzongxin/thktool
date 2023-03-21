@@ -26,7 +26,7 @@ class ModifyUntil
     end
 
     # 修改文件
-    def self.modify_file_line(file,commit)
+    def self.modify_src_file_line(file,commit)
         p 'start modify file ...' + file
 
         IO.write(file, File.open(file) do |f|
@@ -35,19 +35,35 @@ class ModifyUntil
         )
     end
 
-    # 推送文件
-    def self.git_push(commit)
-        pn = Pathname.new(Const.Source_Spec_Path)
-        Dir.chdir(pn.to_s)
-        `git add . && git commit -m "#{commit}" && git pull && git push`
+
+    # 开始修改源码仓库
+    def self.modify_src_commit(src,commit)
+        pn = find_max_ver(src)
+        if pn.file?
+            modify_src_file_line(pn.to_s,commit)
+            return pn.to_s
+        else
+            return nil
+        end
     end
 
-    # 开始修改
-    def self.start_modify_fwk_commit(fwk,commit)
+    # 修改文件
+    def self.modify_fwk_file_line(file,src_commit,fwk_commit)
+        p 'start modify file ...' + file
+
+        IO.write(file, File.open(file) do |f|
+            f.read.gsub(/:commit => (.*)/, ":commit => \"#{fwk_commit}\"")
+        end
+        )
+    end
+
+    def self.modify_fwk_commit(fwk,src_commit,fwk_commit)
         pn = find_max_ver(fwk)
         if pn.file?
-            modify_file_line(pn.to_s,commit)
-            git_push("#{fwk} spec change commit #{commit}")
+            modify_fwk_file_line(pn.to_s,src_commit,fwk_commit)
+            return pn.to_s
+        else
+            return nil
         end
     end
 end

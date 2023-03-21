@@ -3,6 +3,8 @@
 require_relative "thktool/version"
 require_relative "trigger_event"
 require_relative "modify_until"
+require_relative "package_framework"
+require_relative "git_until"
 
 module Thktool
   class Error < StandardError; end
@@ -12,6 +14,17 @@ module Thktool
 
   te = TriggerEvent.new(argv)
   if te.validate_object
-    ModifyUntil.start_modify_fwk_commit(te.fwk,te.commit)
+    # 修改源码仓库对应的spec仓库
+    src_podspec = ModifyUntil.modify_src_commit(te.fwk,te.commit)
+    # 提交spec仓库代码
+    GitUntil.git_push(Const.Source_Spec_Path,"src_podspec change : #{te.fwk} commit => #{te.commit}")
+    # 开始制作二进制包
+    PackageFramework.package(src_podspec)
+    # 提交二进制包到framwork仓库
+    GitUntil.git_push(Const.Bin_Repo_Path,"framework change : #{te.fwk}")
+    # 获取最后一次提交commit
+    last_commit_id = GitUntil.last_commit_id
+    # 修改二进制spec仓库
+    fwk_podspec = ModifyUntil.modify_fwk_commit(te.fwk,te.commit,last_commit_id)
   end
 end
