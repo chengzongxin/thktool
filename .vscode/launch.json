@@ -8,7 +8,8 @@
             "name": "Debug Local File",
             "type": "Ruby",
             "request": "launch",
-            "program": "${file}"
+            "program": "${workspaceRoot}/lib/thktool.rb",
+            "args":["THKMacroKit","TMUICore","Godeye"]
         }
     ]
 }
