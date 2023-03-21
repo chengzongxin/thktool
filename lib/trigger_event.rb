@@ -1,6 +1,10 @@
 require 'json'
 
 class TriggerEvent
+
+    attr_accessor :fwk
+    attr_accessor :commit
+
     def initialize(argv)
         data = argv.first
         json = JSON.parse(data)
@@ -11,11 +15,13 @@ class TriggerEvent
         @commit = json['after']
     end
 
-    def change_source_spec
+    def validate_object
         p @fwk
         p @commit
         if @fwk.nil? || @commit.nil?
             p "no framework or commit founds"
+            return nil
         end
+        return @fwk,@commit
     end
 end
