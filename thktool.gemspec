@@ -10,7 +10,8 @@ Gem::Specification.new do |spec|
 
   spec.summary = "thk tool."
   spec.description = "thk tool."
-  spec.homepage = "https://github.com/chengzongxin/thktool.git"
+  s.homepage    =
+    "https://rubygems.org/gems/thktool"
   spec.required_ruby_version = ">= 2.6.0"
 
   spec.metadata["allowed_push_host"] = "https://github.com/chengzongxin/thktool.git"
