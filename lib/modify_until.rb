@@ -1,4 +1,4 @@
-require_relative 'const'
+require_relative 'config'
 require 'Pathname'
 
 class ModifyUntil
@@ -37,7 +37,7 @@ class ModifyUntil
 
     # 开始修改源码仓库
     def self.modify_src_commit(src,commit)
-        path = Const.Source_Spec_Path
+        path = Config.Source_Spec_Path
         pn = find_max_ver(path,src)
         if pn.file?
             modify_src_file_line(pn.to_s,commit)
@@ -51,8 +51,8 @@ class ModifyUntil
     def self.modify_fwk_file_line(file,src_commit,fwk_commit)
         p 'start modify file ...' + file
 
-        src_url = Const.Source_Repo_Url
-        bin_url = Const.Bin_Repo_Url
+        src_url = Config.Source_Repo_Url
+        bin_url = Config.Bin_Repo_Url
 
         IO.write(file, File.open(file) do |f|
             f.read.gsub(/.*s.source.*#{src_url}.*/, "    s.source           = \{ :git => \'#{src_url}\', :commit => \"#{src_commit}\"\}")
@@ -66,7 +66,7 @@ class ModifyUntil
     end
 
     def self.modify_fwk_commit(fwk,src_commit,fwk_commit)
-        path = Const.Bin_Spec_Path
+        path = Config.Bin_Spec_Path
         pn = find_max_ver(path,fwk)
         if pn.file?
             modify_fwk_file_line(pn.to_s,src_commit,fwk_commit)
@@ -83,5 +83,12 @@ class String
     def compare_by_fields(other, fieldsep = ".")
       cmp = proc { |s| s.split(fieldsep).map(&:to_i) }
       cmp.call(self) <=> cmp.call(other)
+    end
+
+    def trans_home_path!
+        real = Config.Home
+        if self.include? '~'
+            self.gsub(/~/,real)
+        end
     end
 end

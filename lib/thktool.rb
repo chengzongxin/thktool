@@ -5,6 +5,8 @@ require_relative "trigger_event"
 require_relative "modify_until"
 require_relative "package_framework"
 require_relative "git_until"
+require 'yaml'
+require_relative "config"
 
 module Thktool
   class Error < StandardError; end
@@ -17,27 +19,38 @@ module Thktool
   p "web hook argv : "
   p ARGV
 
-  # Tool.run(ARGV)
+  # 初始化配置
+  yml = Config.create_config_file_if_need
+  # 加载配置文件
+  Config.load_yaml(yml)
+
 end
 
 class Tool  
   def self.run(argv)
+    # 初始化配置
+    yml = Config.create_config_file_if_need
+    # 加载配置文件
+    Config.load_yaml(yml)
+    # 触发器创建
     te = TriggerEvent.new(argv)
     if te.validate_object
       # 修改源码仓库对应的spec仓库
       src_podspec = ModifyUntil.modify_src_commit(te.fwk,te.commit)
       # 提交spec仓库代码
-      GitUntil.git_push(Const.Source_Spec_Path,"source podspec repo change : #{te.fwk} commit => #{te.commit}")
+      GitUntil.git_push(Config.Source_Spec_Path,"source podspec repo change : #{te.fwk} commit => #{te.commit}")
+      # 判断是否打包
+      return unless Config.Package_Enable
       # 开始制作二进制包
       PackageFramework.package(src_podspec)
       # 提交二进制包到framwork仓库
-      GitUntil.git_push(Const.Bin_Repo_Path,"binary repo change : #{te.fwk}")
+      GitUntil.git_push(Config.Bin_Repo_Path,"binary repo change : #{te.fwk}")
       # 获取二进制仓库最后一次提交commit
-      last_commit_id = GitUntil.last_commit_id(Const.Bin_Repo_Path)
+      last_commit_id = GitUntil.last_commit_id(Config.Bin_Repo_Path)
       # 修改二进制spec仓库
       fwk_podspec = ModifyUntil.modify_fwk_commit(te.fwk,te.commit,last_commit_id)
       # 提交二进制spec仓库
-      GitUntil.git_push(Const.Bin_Spec_Path,"binary podspec change : #{te.fwk} src commit => #{te.commit},  bin commit => #{last_commit_id}")
+      GitUntil.git_push(Config.Bin_Spec_Path,"binary podspec change : #{te.fwk} src commit => #{te.commit},  bin commit => #{last_commit_id}")
     end
   end
 end

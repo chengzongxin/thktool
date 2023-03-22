@@ -1,0 +1,19 @@
+SOURCE_REPO_PATH: ~/
+
+SOURCE_SPEC_PATH: ~/thkbusinesskitspecs
+
+BIN_REPO_PATH: ~/frameworkrepo
+
+BIN_SPEC_PATH: ~/frameworkspec
+
+SOURCE_REPO_URL: 'http://repo.we.com/iosfeaturelibraries/THKBusinessComponent.git'
+
+BIN_REPO_URL: 'git@repo.we.com:iosfeaturelibraries/frameworkrepo.git'
+
+PACKAGE_ENABLE: 1
+
+PACKAGE_SOURCE_REPO:
+- https://github.com/CocoaPods/Specs.git
+- git@repo.we.com:iosfeaturelibraries/thkbusinesskitspecs.git
+- git@repo.we.com:ios/tspecsrepo.git
+

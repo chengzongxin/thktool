@@ -1,10 +1,10 @@
-require_relative 'const'
+require_relative 'config'
 
 class PackageFramework
     
     def self.package(podspec)
-        Dir.chdir(Const.Bin_Repo_Path)
-        spec_source = ['https://github.com/CocoaPods/Specs.git','git@repo.we.com:iosfeaturelibraries/thkbusinesskitspecs.git','git@repo.we.com:ios/tspecsrepo.git']
+        Dir.chdir(Config.Bin_Repo_Path)
+        spec_source = Config.Package_Source_repo
         command = "pod packagethk #{podspec} --force --exclude-deps --no-mangle --configuration=Debug --spec-sources=#{spec_source.join(',')}"
         puts "start package ..."
         puts command
