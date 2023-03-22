@@ -36,7 +36,7 @@ class ModifyUntil
 
 
     # 开始修改源码仓库
-    def self.modify_src_commit(file,src,commit)
+    def self.modify_src_commit(src,commit)
         path = Const.Source_Spec_Path
         pn = find_max_ver(path,src)
         if pn.file?
