@@ -22,4 +22,12 @@ class Const
     def self.Bin_Spec_Path
         self.Home + '/frameworkspec'
     end
+
+    def self.Source_Repo_Url
+        'http://repo.we.com/iosfeaturelibraries/THKBusinessComponent.git'
+    end
+
+    def self.Bin_Repo_Url
+        'git@repo.we.com:iosfeaturelibraries/frameworkrepo.git'
+    end
 end

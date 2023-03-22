@@ -7,9 +7,8 @@ class ModifyUntil
     end
 
     # 查找最大版本号
-    def self.find_max_ver(fwk)
-        file = Const.Source_Spec_Path
-        pn = Pathname.new(file) + fwk
+    def self.find_max_ver(path,fwk)
+        pn = Pathname.new(path) + fwk
         maxVer = "0.0.0"
         if pn.directory? 
             pn.each_entry { |verDir|
@@ -37,8 +36,9 @@ class ModifyUntil
 
 
     # 开始修改源码仓库
-    def self.modify_src_commit(src,commit)
-        pn = find_max_ver(src)
+    def self.modify_src_commit(file,src,commit)
+        path = Const.Source_Spec_Path
+        pn = find_max_ver(path,src)
         if pn.file?
             modify_src_file_line(pn.to_s,commit)
             return pn.to_s
@@ -51,14 +51,23 @@ class ModifyUntil
     def self.modify_fwk_file_line(file,src_commit,fwk_commit)
         p 'start modify file ...' + file
 
+        src_url = Const.Source_Repo_Url
+        bin_url = Const.Bin_Repo_Url
+
         IO.write(file, File.open(file) do |f|
-            f.read.gsub(/:commit => (.*)/, ":commit => \"#{fwk_commit}\"")
+            f.read.gsub(/.*s.source.*#{src_url}.*/, "    s.source           = \{ :git => \'#{src_url}\', :commit => \"#{src_commit}\"\}")
+        end
+        )
+
+        IO.write(file, File.open(file) do |f|
+            f.read.gsub(/.*s.source.*#{bin_url}.*/, "    s.source           = \{ :git => \'#{bin_url}\', :commit => \"#{fwk_commit}\"\}")
         end
         )
     end
 
     def self.modify_fwk_commit(fwk,src_commit,fwk_commit)
-        pn = find_max_ver(fwk)
+        path = Const.Bin_Spec_Path
+        pn = find_max_ver(path,fwk)
         if pn.file?
             modify_fwk_file_line(pn.to_s,src_commit,fwk_commit)
             return pn.to_s

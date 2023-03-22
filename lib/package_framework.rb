@@ -10,11 +10,11 @@ class PackageFramework
         puts command
         output = `#{command}`
         error = nil
-        if $?.exitstatus != 0 {
+        if $?.exitstatus != 0 
             error = output
             puts error
             Process.exit
-        }
+        end
         puts output
     end
 end

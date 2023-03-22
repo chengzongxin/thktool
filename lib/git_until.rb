@@ -7,7 +7,8 @@ class GitUntil
     end
 
     # 获取最后一次提交commit id
-    def last_commit_id
-        `git rev-parse --short HEAD`
+    def self.last_commit_id(path)
+        Dir.chdir(path)
+        `git rev-parse --short HEAD`.chomp
     end
 end
