@@ -5,11 +5,13 @@ class Config
 
     def self.create_config_file_if_need
         yaml = nil
+        
         if File.exist?(Config.config_file)
             yaml = YAML.load_file(Config.config_file)
             Config.load_yaml(yaml)
         else
-            yaml = YAML.load_file('lib/thktool_config.yml')
+            yml_file = File.join(File.dirname(File.expand_path(__FILE__)), 'thktool_config.yml')
+            yaml = YAML.load_file(yml_file)
             File.open(Config.config_file,"w") { |f| YAML.dump(yaml,f) }
         end
         yaml
